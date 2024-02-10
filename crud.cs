@@ -9,26 +9,28 @@ namespace adoNetTest
 {
     public class CRUD
     {
-        private readonly string CONNECTIONSTRING = "Server=localhost;Port=5432;Database=Demo;User Id=postgres;Password=135;";
+        private readonly string CONNECTIONSTRING = "Server=localhost;Port=5432;Database=Assignment;User Id=postgres;Password=135;";
         string? query;
+        string? tableName;
 
-        public string Create(string tableName, params[] values)
+        public string Create(string table, string fullName, string email, string password, string phoneNumber)
         {
-            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            tableName = table;
 
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
-            //logic
-            query = "Create table if not exists demo_table(id serial, theme varchar(40), start_date date, students_count int);";
+            
+            query = $"Create table if not exists {tableName}(id serial, fullName varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
 
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
+            
             command.ExecuteNonQuery();
 
             connection.Close();
-
             return $"{tableName} was created successfully!";
         }
 
-        public void Select(string tableName)
+        public void GetAll()
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
@@ -45,10 +47,25 @@ namespace adoNetTest
                 {
                     Console.Write($"{reader[i]} ");
                 }
+                Console.WriteLine();
             }
+
             connection.Close();
         }
 
-        public 
+        public string InsertOne(string columnName, string data)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Create table if not exists {tableName}(id serial, fullName varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return $"{tableName} was created successfully!";
+        }
     }
 }
