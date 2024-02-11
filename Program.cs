@@ -6,22 +6,15 @@ namespace adoNetTest
     {
         static void Main(string[] args)
         {
-            string tableName, fullName, email, password, phoneNumber;
             CRUD crud = new CRUD();
 
-            Console.Write("Table name >> ");
-            tableName = Console.ReadLine()!;
-            Console.Write("Fullname >> ");
-            fullName = Console.ReadLine()!;
-            Console.Write("Email >> ");
-            email = Console.ReadLine()!;
-            Console.Write("Password >> ");
-            password = Console.ReadLine()!;
-            Console.Write("Phone number >> ");
-            phoneNumber = Console.ReadLine()!;
-
-            Console.WriteLine(crud.Create(tableName, fullName, email, password, phoneNumber));
-
+            crud.Create("users");
+            crud.InsertMany("users", "Nuriddin Asrorov", "accigen@gmail.com", "accigen", "+998907777777");
+            crud.InsertMany("users", "Den Rov", "denrov@gmail.com", "denrov", "+998907777777");
+            crud.GetAll("users");
+            crud.GetById("users", 2);
+            crud.Delete("users", "Den Rov");
+            crud.NewDatabase("Test");
         }
 
     }
