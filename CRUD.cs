@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace adoNetTest
 {
@@ -11,13 +12,16 @@ namespace adoNetTest
     {
         private readonly string CONNECTIONSTRING = "Server=localhost;Port=5432;Database=Assignment;User Id=postgres;Password=135;";
         string? query;
+        string? tableName;
 
-        public string Create(string tableName, string fullName, string email, string password, string phoneNumber)
+        public string Create(string table, string fullname, string email, string password, string phoneNumber)
         {
+            tableName = table;
+
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
             
-            query = $"Create table if not exists {tableName}(id serial, fullName varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
+            query = $"Create table if not exists {tableName}(id serial, fullname varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
 
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
             
@@ -27,12 +31,12 @@ namespace adoNetTest
             return $"{tableName} was created successfully!";
         }
 
-        public void GetAll(string tableName)
+        public void GetAll()
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
 
-            query = $"select * from {tableName}";
+            query = $"select * from {tableName};";
 
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
 
@@ -50,6 +54,72 @@ namespace adoNetTest
             connection.Close();
         }
 
-        public  
+        public void GetById(int id)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"select * from {tableName} where Id = {id};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write($"{reader[i]} ");
+                }
+                Console.WriteLine();
+            }
+
+            connection.Close();
+        }
+
+        public string InsertOne(string columnName, string data)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Insert into {tableName}({columnName}) values ('{data}');";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Inserted successfully!";
+        }
+
+        public string InsertMany(string fullname, string email, string password, string phoneNumber)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Insert into {tableName}(fullname, email, password, phoneNumber) values ('{fullname}', '{email}', '{password}', '{phoneNumber}');";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Inserted successfully!";
+        }
+
+        public string Delete(string tableName, string fullname)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Delete from {tableName} where fullname = '{fullname}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Deleted successfully!";
+        }
     }
 }
