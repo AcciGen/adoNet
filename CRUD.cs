@@ -245,7 +245,7 @@ namespace adoNetTest
             command.ExecuteNonQuery();
 
             connection.Close();
-            return $"{databaseName} was created successfully!";
+            return $"New database was created successfully!";
         }
 
         public string Truncate(string tableName)
