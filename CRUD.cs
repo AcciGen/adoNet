@@ -286,6 +286,19 @@ namespace adoNetTest
             connection.Close();
         }
 
+        public string Index(string indexName, string tableName, string columnName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
 
+            query = $"Create index {indexName} on {tableName} ({columnName});";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Index was created successfully!";
+        }
     }
 }
