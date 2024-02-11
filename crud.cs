@@ -12,16 +12,13 @@ namespace adoNetTest
     {
         private readonly string CONNECTIONSTRING = "Server=localhost;Port=5432;Database=Assignment;User Id=postgres;Password=135;";
         string? query;
-        string? tableName;
 
-        public string Create(string table, string fullName, string email, string password, string phoneNumber)
+        public string Create(string tableName)
         {
-            tableName = table;
-
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
             
-            query = $"Create table if not exists {tableName}(id serial, fullName varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
+            query = $"Create table if not exists {tableName}(id serial, fullname varchar(50), email varchar(100), password varchar(100), phoneNumber varchar(50));";
 
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
             
@@ -31,7 +28,7 @@ namespace adoNetTest
             return $"{tableName} was created successfully!";
         }
 
-        public void GetAll()
+        public void GetAll(string tableName)
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
@@ -54,7 +51,7 @@ namespace adoNetTest
             connection.Close();
         }
 
-        public void GetById(int id)
+        public void GetById(string tableName, int id)
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
@@ -77,7 +74,7 @@ namespace adoNetTest
             connection.Close();
         }
 
-        public string InsertOne(string columnName, string data)
+        public string InsertOne(string tableName, string columnName, string data)
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
@@ -89,24 +86,234 @@ namespace adoNetTest
             command.ExecuteNonQuery();
 
             connection.Close();
-            return $"Inserted successfully!";
+            return "Inserted successfully!";
         }
 
-        public string InsertMany(string fullName, string email, string password, string phoneNumber)
+        public string InsertMany(string tableName, string fullname, string email, string password, string phoneNumber)
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
 
-            query = $"Insert into {tableName}(fullName, email, password, phoneNumber) values ('{fullName}', '{email}', '{password}', '{phoneNumber}');";
+            query = $"Insert into {tableName}(fullname, email, password, phoneNumber) values ('{fullname}', '{email}', '{password}', '{phoneNumber}');";
 
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
 
             command.ExecuteNonQuery();
 
             connection.Close();
-            return $"Inserted successfully!";
+            return "Inserted successfully!";
         }
 
+        public string Delete(string tableName, string fullname)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
 
+            query = $"Delete from {tableName} where fullname = '{fullname}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Deleted successfully!";
+        }
+
+        public string UpdateOne(string tableName, string columnName, string oldOne, string newOne)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Update {tableName} set {columnName} = '{newOne}' where {columnName} = '{oldOne}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Updated successfully!";
+        }
+
+        public string UpdateMany(string tableName, string oldname, string fullname, string email, string password, string phoneNumber)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Update {tableName} set fullname = '{fullname}', email = '{email}', password = '{password}', phoneNumber = '{phoneNumber}' where fullname = '{oldname}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Updated successfully!";
+        }
+
+        public void GetLike(string tableName, string columnName, string text)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Select * from {tableName} where {columnName} like '%{text}%';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write($"{reader[i]} ");
+                }
+                Console.WriteLine();
+            }
+
+            connection.Close();
+        }
+
+        public string AddColumn(string tableName, string columnName, string type)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Alter table {tableName} add column {columnName} {type};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Column was added successfully!";
+        }
+
+        public string AddColumnWithDefaultValue(string tableName, string columnName, string type, string defaultValue)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Alter table {tableName} add column {columnName} {type} default {defaultValue};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Column was added successfully!";
+        }
+
+        public string AlterColumnName(string tableName, string oldColumnName, string newColumnName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Alter table {tableName} rename column {oldColumnName} to {newColumnName};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Column was altered successfully!";
+        }
+
+        public string AlterTableName(string tableName, string newTableName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Alter table {tableName} rename to {newTableName};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+            tableName = newTableName;
+
+            connection.Close();
+            return "Table was altered successfully!";
+        }
+
+        public string NewDatabase(string databaseName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Create database {databaseName};";
+            
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+            
+            command.ExecuteNonQuery();
+
+
+                string connectionString = $"Server=localhost;Port=5432;Database={databaseName.ToLower()};User Id=postgres;Password=135;";
+                
+                NpgsqlConnection newConnection = new NpgsqlConnection(connectionString);
+                newConnection.Open();
+                
+                query = $"Create table names(id serial, fullname varchar(50)); Create table emails(id serial, email varchar(100)); Create table phoneNumbers(id serial, phoneNumber varchar(100));";
+                
+                NpgsqlCommand newCommand = new NpgsqlCommand(query, newConnection);
+                
+                newCommand.ExecuteNonQuery();
+
+                newConnection.Close();
+
+
+            connection.Close();
+            return $"{databaseName} was created successfully!";
+        }
+
+        public string Truncate(string tableName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Truncate table {tableName};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Truncated successfully!";
+        }
+
+        public void Join(string table1, string table2)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Select * from {table1} as t1 join {table2} as t2 on t1.id = t2.id;";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write($"{reader[i]} ");
+                }
+                Console.WriteLine();
+            }
+
+            connection.Close();
+        }
+
+        public string Index(string indexName, string tableName, string columnName)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Create index {indexName} on {tableName} ({columnName});";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Index was created successfully!";
+        }
     }
 }
