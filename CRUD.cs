@@ -238,11 +238,26 @@ namespace adoNetTest
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
 
-            query = $"Create database {databaseName};\r\n\\c {databaseName}\r\nCreate table names(id serial, fullname varchar(50));\r\nCreate table emails(id serial, email varchar(100));\r\nCreate table phoneNumbers(id serial, phoneNumber varchar(100));";
+            query = $"Create database {databaseName};";
             
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
             
             command.ExecuteNonQuery();
+
+
+                string connectionString = $"Server=localhost;Port=5432;Database={databaseName.ToLower()};User Id=postgres;Password=135;";
+                
+                NpgsqlConnection newConnection = new NpgsqlConnection(connectionString);
+                newConnection.Open();
+                
+                query = $"Create table names(id serial, fullname varchar(50)); Create table emails(id serial, email varchar(100)); Create table phoneNumbers(id serial, phoneNumber varchar(100));";
+                
+                NpgsqlCommand newCommand = new NpgsqlCommand(query, newConnection);
+                
+                newCommand.ExecuteNonQuery();
+
+                newConnection.Close();
+
 
             connection.Close();
             return $"{databaseName} was created successfully!";
