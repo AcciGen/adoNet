@@ -238,7 +238,7 @@ namespace adoNetTest
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
 
-            query = $"Create database {databaseName};\r\n\\c {databaseName}\r\nCreate table names(id serial, fullname varchar(50));\r\nCreate table emails(id serial, email varchar(100));\r\nCreate table phoneNumbers(id serial, phoneNumber varchar(100));";
+            query = $"Create database {databaseName};\r\n\\c {databaseName};\r\nCreate table names(id serial, fullname varchar(50));\r\nCreate table emails(id serial, email varchar(100));\r\nCreate table phoneNumbers(id serial, phoneNumber varchar(100));";
             
             NpgsqlCommand command = new NpgsqlCommand(query, connection);
             
