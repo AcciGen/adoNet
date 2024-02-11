@@ -187,7 +187,7 @@ namespace adoNetTest
             command.ExecuteNonQuery();
 
             connection.Close();
-            return "Updated successfully!";
+            return "Column was added successfully!";
         }
     }
 }
