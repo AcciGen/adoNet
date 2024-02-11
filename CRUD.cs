@@ -107,7 +107,7 @@ namespace adoNetTest
             return "Inserted successfully!";
         }
 
-        public string Delete(string tableName, string fullname)
+        public string Delete(string fullname)
         {
             NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
             connection.Open();
@@ -120,6 +120,74 @@ namespace adoNetTest
 
             connection.Close();
             return "Deleted successfully!";
+        }
+
+        public string UpdateOne(string columnName, string oldOne, string newOne)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Update {tableName} set {columnName} = '{newOne}' where {columnName} = '{oldOne}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Updated successfully!";
+        }
+
+        public string UpdateMany(string oldname, string fullname, string email, string password, string phoneNumber)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"Update {tableName} set fullname = '{fullname}', email = '{email}', password = '{password}', phoneNumber = '{phoneNumber}' where fullname = '{oldname}';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Updated successfully!";
+        }
+
+        public void GetLike(string columnName, string text)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"select * from {tableName} where {columnName} like '%{text}%';";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write($"{reader[i]} ");
+                }
+                Console.WriteLine();
+            }
+
+            connection.Close();
+        }
+
+        public string AddColumn(string columnName, string type)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(CONNECTIONSTRING);
+            connection.Open();
+
+            query = $"alter table {tableName} add column {columnName} {type};";
+
+            NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+            command.ExecuteNonQuery();
+
+            connection.Close();
+            return "Updated successfully!";
         }
     }
 }
